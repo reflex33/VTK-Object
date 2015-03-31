@@ -1,0 +1,9 @@
+﻿<Window x:Class="significance_camera.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Significance Camera" Height="350" Width="525" Loaded="Window_Loaded">
+    <Grid>
+        <Viewport3D Height="240" HorizontalAlignment="Left" VerticalAlignment="Top" Width="320" Name="viewport" Margin="12" />
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="242" VerticalAlignment="Top" Width="320" Margin="12,10,0,0"/>
+    </Grid>
+</Window>
