@@ -104,6 +104,10 @@
       <Project>{fc995e54-5b80-4a9e-829b-e4c6fe58da09}</Project>
       <Name>vtk</Name>
     </ProjectReference>
+    <ProjectReference Include="..\wpf_vtk_object\wpf_vtk_object.csproj">
+      <Project>{3ff86b3c-0478-414d-977a-97736d953bce}</Project>
+      <Name>wpf_vtk_object</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

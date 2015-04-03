@@ -8,6 +8,12 @@
         POLYGONS,
         TRIANGLE_STRIPS
     }
+    public enum NORMAL_TYPE
+    {
+        UNKNOWN,
+        POINT_DATA,
+        CELL_DATA
+    }
     public struct point
     {
         public float x;
@@ -49,7 +55,7 @@
             }
         }
         public primative[] primatives = null;
-        bool normals_per_vertex = false;
+        public NORMAL_TYPE normal_type = NORMAL_TYPE.UNKNOWN;
         public int num_normals
         {
             get
@@ -64,11 +70,11 @@
         public vtk_object()
         {
         }
-        public vtk_object(string file_name)
+        public vtk_object(string file_name) : this()
         {
             open(file_name);
         }
-        public void open(string file_name)
+        public virtual void open(string file_name)
         {
             // Helper anonymous functions
             System.Func<System.IO.BinaryReader, string> read_line = br =>
@@ -85,12 +91,12 @@
                         c = br.ReadChar();
                     }
                     if (result.ToString().EndsWith("\r"))  // If the file has Windows line endings 
-                        result.Remove(result.Length - 1, 1);  // Eliminate the carriage return
+                        result.Remove(result.Length - 1, 1);  // eliminate the carriage return
                 } while (result.ToString() == "");
 
                 return result.ToString();
             };
-            System.Func<System.IO.BinaryReader, string> read_to_delimiter = br =>
+            System.Func<System.IO.BinaryReader, string> read_token = br =>
             {
                 System.Text.StringBuilder result = new System.Text.StringBuilder();
 
@@ -103,7 +109,7 @@
                         c = br.ReadChar();
                     }
                     if (result.ToString().EndsWith("\r"))  // If the file has Windows line endings 
-                        result.Remove(result.Length - 1, 1);  // Eliminate the carriage return
+                        result.Remove(result.Length - 1, 1);  // eliminate the carriage return
                 } while (result.ToString() == "");
 
                 return result.ToString();
@@ -112,162 +118,59 @@
             System.IO.BinaryReader file = new System.IO.BinaryReader(System.IO.File.Open(file_name, System.IO.FileMode.Open));
             string text;
 
-            //// Check if the file identifier is correct
-            text = read_line(file);
-            if (text != "# vtk DataFile Version 3.0")
-                throw new System.FormatException("The VTK file header (version 3.0) was not found!");
-            text = read_line(file);  // Skip the header
-
-            // Determine if the VTK file is in ASCII or BINARY format
-            bool binary = false;
-            text = read_line(file);
-            if (text == "ASCII")
-                binary = false;
-            else if (text == "BINARY")
-                binary = true;
-            else
-                throw new System.FormatException("The VTK file format could not be determined (ASCII or binary)!");
-
-            // Check for the polygonal dataset structure identifier
-            text = read_line(file);
-            if (text != "DATASET POLYDATA")
-                throw new System.FormatException("The VTK file is in an unexpected format (couldn't find polygonal dataset)!");
-
-            // Check for the data points identifer
-            text = read_to_delimiter(file);
-            if (text != "POINTS")
-                throw new System.FormatException("The VTK file is in an unexpected format (couldn't find points identifier)!");
-
-            // Read the number of data points
-            text = read_to_delimiter(file);
-            int num_points = System.Convert.ToInt32(text);
-            if (num_points <= 0)
-                throw new System.FormatException("The number of data points could not be determined!");
-
-            // Check for the float type for the data points
-            text = read_line(file);
-            if (text != "float")
-                throw new System.FormatException("The VTK file is in an unexpected format (data points aren't floating point)!");
-
-            // Read the points data
-            points = new point[num_points];
-            for (int i = 0; i < num_points; ++i)
+            try
             {
-                if (binary == false)  // ASCII encoded values
+                // Check if the file identifier is correct
+                text = read_line(file);
+                if (text != "# vtk DataFile Version 3.0")
+                    throw new System.FormatException("The VTK file header (version 3.0) was not found!");
+                text = read_line(file);  // Skip the header
+
+                // Determine if the VTK file is in ASCII or BINARY format
+                bool binary = false;
+                text = read_line(file);
+                if (text == "ASCII")
+                    binary = false;
+                else if (text == "BINARY")
+                    binary = true;
+                else
+                    throw new System.FormatException("The VTK file format could not be determined (ASCII or binary)!");
+
+                // Check for the polygonal dataset structure identifier
+                text = read_line(file);
+                if (text != "DATASET POLYDATA")
+                    throw new System.FormatException("The VTK file is in an unexpected format (couldn't find polygonal dataset)!");
+
+                // Check for the data points identifer
+                text = read_token(file);
+                if (text != "POINTS")
+                    throw new System.FormatException("The VTK file is in an unexpected format (couldn't find points identifier)!");
+
+                // Read the number of data points
+                text = read_token(file);
+                int num_points = System.Convert.ToInt32(text);
+                if (num_points <= 0)
+                    throw new System.FormatException("The number of data points could not be determined!");
+
+                // Check for the float type for the data points
+                text = read_line(file);
+                if (text != "float")
+                    throw new System.FormatException("The VTK file is in an unexpected format (data points aren't floating point)!");
+
+                // Read the points data
+                points = new point[num_points];
+                for (int i = 0; i < num_points; ++i)
                 {
-                    text = read_to_delimiter(file);
-                    points[i].x = float.Parse(text);
-                    text = read_to_delimiter(file);
-                    points[i].y = float.Parse(text);
-                    text = read_to_delimiter(file);
-                    points[i].z = float.Parse(text);
-                }
-                else  // Binary encoded values
-                {
-                    byte temp;
-                    byte[] bytes;
-
-                    bytes = file.ReadBytes(4);
-                    // Swap endianness
-                    temp = bytes[0];
-                    bytes[0] = bytes[3];
-                    bytes[3] = temp;
-                    temp = bytes[1];
-                    bytes[1] = bytes[2];
-                    bytes[2] = temp;
-                    points[i].x = System.BitConverter.ToSingle(bytes, 0);
-
-                    bytes = file.ReadBytes(4);
-                    // Swap endianness
-                    temp = bytes[0];
-                    bytes[0] = bytes[3];
-                    bytes[3] = temp;
-                    temp = bytes[1];
-                    bytes[1] = bytes[2];
-                    bytes[2] = temp;
-                    points[i].y = System.BitConverter.ToSingle(bytes, 0);
-
-                    bytes = file.ReadBytes(4);
-                    // Swap endianness
-                    temp = bytes[0];
-                    bytes[0] = bytes[3];
-                    bytes[3] = temp;
-                    temp = bytes[1];
-                    bytes[1] = bytes[2];
-                    bytes[2] = temp;
-                    points[i].z = System.BitConverter.ToSingle(bytes, 0);
-                }
-            }
-
-            // Read the polygonal primitive identifier
-            text = read_to_delimiter(file);
-            if (text == "VERTICES")
-                primitive_type = PRIMITIVE_TYPE.VERTICES;
-            else if (text == "LINES")
-                primitive_type = PRIMITIVE_TYPE.LINES;
-            else if (text == "POLYGONS")
-                primitive_type = PRIMITIVE_TYPE.POLYGONS;
-            else if (text == "TRIANGLE_STRIPS")
-                primitive_type = PRIMITIVE_TYPE.TRIANGLE_STRIPS;
-            else
-            {
-                clear();
-                throw new System.FormatException("The VTK file is in an unexpected format (unrecognized polygonal primitive type)!");
-            }
-
-            // Read the number of primitives
-            text = read_to_delimiter(file);
-            int num_primatives = System.Convert.ToInt32(text);
-            if (num_primatives <= 0)
-                throw new System.FormatException("The number of polygonal primitives could not be determined!");
-
-            // Read and ignore the number of integers used in the primitives list
-            // (Our dynamic array will handle each primitive separately)
-            text = read_line(file);
-
-            // Read the polygonal primitives
-            primatives = new primative[num_primatives];
-            for (int i = 0; i < num_primatives; ++i)
-            {
-                // Read the size of the current primitive
-                int prim_size = 0;
-                if (binary == false)  // ASCII encoded values
-                {
-                    text = read_to_delimiter(file);
-                    prim_size = int.Parse(text);
-                }
-                else  // Binary encoded values
-                {
-                    byte temp;
-                    byte[] bytes;
-
-                    bytes = file.ReadBytes(4);
-                    // Swap endianness
-                    temp = bytes[0];
-                    bytes[0] = bytes[3];
-                    bytes[3] = temp;
-                    temp = bytes[1];
-                    bytes[1] = bytes[2];
-                    bytes[2] = temp;
-                    prim_size = System.BitConverter.ToInt32(bytes, 0);
-                }
-
-                if (prim_size <= 0)
-                    throw new System.FormatException("A primitive's size could not be determined!");
-                primatives[i].indices = new int[prim_size];
-                primatives[i].num_of_points = prim_size;  // Don't count the size itself
-
-                if (binary == false)  // ASCII encoded values
-                {
-                    for (int j = 0; j < prim_size; ++j)
+                    if (binary == false)  // ASCII encoded values
                     {
-                        text = read_to_delimiter(file);
-                        primatives[i].indices[j] = int.Parse(text);
+                        text = read_token(file);
+                        points[i].x = float.Parse(text);
+                        text = read_token(file);
+                        points[i].y = float.Parse(text);
+                        text = read_token(file);
+                        points[i].z = float.Parse(text);
                     }
-                }
-                else  // Binary encoded values
-                {
-                    for (int j = 0; j < prim_size; ++j)
+                    else  // Binary encoded values
                     {
                         byte temp;
                         byte[] bytes;
@@ -280,18 +183,224 @@
                         temp = bytes[1];
                         bytes[1] = bytes[2];
                         bytes[2] = temp;
-                        primatives[i].indices[j] = System.BitConverter.ToInt32(bytes, 0);
+                        points[i].x = System.BitConverter.ToSingle(bytes, 0);
+
+                        bytes = file.ReadBytes(4);
+                        // Swap endianness
+                        temp = bytes[0];
+                        bytes[0] = bytes[3];
+                        bytes[3] = temp;
+                        temp = bytes[1];
+                        bytes[1] = bytes[2];
+                        bytes[2] = temp;
+                        points[i].y = System.BitConverter.ToSingle(bytes, 0);
+
+                        bytes = file.ReadBytes(4);
+                        // Swap endianness
+                        temp = bytes[0];
+                        bytes[0] = bytes[3];
+                        bytes[3] = temp;
+                        temp = bytes[1];
+                        bytes[1] = bytes[2];
+                        bytes[2] = temp;
+                        points[i].z = System.BitConverter.ToSingle(bytes, 0);
+                    }
+                }
+
+                // Read the polygonal primitive identifier
+                text = read_token(file);
+                if (text == "VERTICES")
+                    primitive_type = PRIMITIVE_TYPE.VERTICES;
+                else if (text == "LINES")
+                    primitive_type = PRIMITIVE_TYPE.LINES;
+                else if (text == "POLYGONS")
+                    primitive_type = PRIMITIVE_TYPE.POLYGONS;
+                else if (text == "TRIANGLE_STRIPS")
+                    primitive_type = PRIMITIVE_TYPE.TRIANGLE_STRIPS;
+                else
+                {
+                    clear();
+                    throw new System.FormatException("The VTK file is in an unexpected format (unrecognized polygonal primitive type)!");
+                }
+
+                // Read the number of primitives
+                text = read_token(file);
+                int num_primatives = System.Convert.ToInt32(text);
+                if (num_primatives <= 0)
+                    throw new System.FormatException("The number of polygonal primitives could not be determined!");
+
+                // Read and ignore the number of integers used in the primitives list
+                // (Our dynamic array will handle each primitive separately)
+                text = read_line(file);
+
+                // Read the polygonal primitives
+                primatives = new primative[num_primatives];
+                for (int i = 0; i < num_primatives; ++i)
+                {
+                    // Read the size of the current primitive
+                    int prim_size = 0;
+                    if (binary == false)  // ASCII encoded values
+                    {
+                        text = read_token(file);
+                        prim_size = int.Parse(text);
+                    }
+                    else  // Binary encoded values
+                    {
+                        byte temp;
+                        byte[] bytes;
+
+                        bytes = file.ReadBytes(4);
+                        // Swap endianness
+                        temp = bytes[0];
+                        bytes[0] = bytes[3];
+                        bytes[3] = temp;
+                        temp = bytes[1];
+                        bytes[1] = bytes[2];
+                        bytes[2] = temp;
+                        prim_size = System.BitConverter.ToInt32(bytes, 0);
+                    }
+
+                    if (prim_size <= 0)
+                        throw new System.FormatException("A primitive's size could not be determined!");
+                    primatives[i].indices = new int[prim_size];
+                    primatives[i].num_of_points = prim_size;  // Don't count the size itself
+
+                    if (binary == false)  // ASCII encoded values
+                    {
+                        for (int j = 0; j < prim_size; ++j)
+                        {
+                            text = read_token(file);
+                            primatives[i].indices[j] = int.Parse(text);
+                        }
+                    }
+                    else  // Binary encoded values
+                    {
+                        for (int j = 0; j < prim_size; ++j)
+                        {
+                            byte temp;
+                            byte[] bytes;
+
+                            bytes = file.ReadBytes(4);
+                            // Swap endianness
+                            temp = bytes[0];
+                            bytes[0] = bytes[3];
+                            bytes[3] = temp;
+                            temp = bytes[1];
+                            bytes[1] = bytes[2];
+                            bytes[2] = temp;
+                            primatives[i].indices[j] = System.BitConverter.ToInt32(bytes, 0);
+                        }
+                    }
+                }
+
+                // Search for a normal vector section among the dataset attributes.
+                // Rather than parse every possible VTK data section, we're just going to look
+                // for the headers POINT_DATA, CELL_DATA, or NORMALS following a newline
+                NORMAL_TYPE attribute_type = NORMAL_TYPE.UNKNOWN;
+                int num_normals = 0;
+                while (true)
+                {
+                    text = read_token(file);
+                    if (text == "POINT_DATA")  // Following dataset attributes are per-point
+                    {
+                        text = read_token(file);
+                        num_normals = System.Convert.ToInt32(text);
+                        if (num_normals != num_points)
+                            throw new System.FormatException("Unexpected size of point dataset attributes!");
+                        else
+                            attribute_type = NORMAL_TYPE.POINT_DATA;  // We're in the point dataset attributes section
+                    }
+                    else if (text == "CELL_DATA")  // Following dataset attributes are per-primitive
+                    {
+                        text = read_token(file);
+                        num_normals = System.Convert.ToInt32(text);
+                        if (num_normals != num_primatives)
+                            throw new System.FormatException("Unexpected size of cell (primitive) dataset attribute!.");
+                        else
+                            attribute_type = NORMAL_TYPE.CELL_DATA;  // We're in the point dataset attributes section
+                    }
+                    else if (text == "NORMALS")
+                    {
+                        if (attribute_type != NORMAL_TYPE.UNKNOWN)  // We're in a valid section
+                        {
+                            // Read and ignore the normal section's dataName (we only support one set of normals)
+                            text = read_token(file);
+
+                            // Check if the normals vectors are specified in floating point format
+                            text = read_token(file);
+                            if (text != "float")
+                                throw new System.FormatException("Normal vectors not read because they are not floating point!");
+
+                            // Set the type of normals
+                            normal_type = attribute_type;
+
+                            // Read the normal vectors
+                            normals = new normal[num_normals];
+                            for (int i = 0; i < num_normals; ++i)
+                            {
+                                if (binary == false)  // ASCII encoded values
+                                {
+                                    text = read_token(file);
+                                    normals[i].x = float.Parse(text);
+                                    text = read_token(file);
+                                    normals[i].y = float.Parse(text);
+                                    text = read_token(file);
+                                    normals[i].z = float.Parse(text);
+                                }
+                                else  // Binary encoded values
+                                {
+                                    byte temp;
+                                    byte[] bytes;
+
+                                    bytes = file.ReadBytes(4);
+                                    // Swap endianness
+                                    temp = bytes[0];
+                                    bytes[0] = bytes[3];
+                                    bytes[3] = temp;
+                                    temp = bytes[1];
+                                    bytes[1] = bytes[2];
+                                    bytes[2] = temp;
+                                    normals[i].x = System.BitConverter.ToSingle(bytes, 0);
+
+                                    bytes = file.ReadBytes(4);
+                                    // Swap endianness
+                                    temp = bytes[0];
+                                    bytes[0] = bytes[3];
+                                    bytes[3] = temp;
+                                    temp = bytes[1];
+                                    bytes[1] = bytes[2];
+                                    bytes[2] = temp;
+                                    normals[i].y = System.BitConverter.ToSingle(bytes, 0);
+
+                                    bytes = file.ReadBytes(4);
+                                    // Swap endianness
+                                    temp = bytes[0];
+                                    bytes[0] = bytes[3];
+                                    bytes[3] = temp;
+                                    temp = bytes[1];
+                                    bytes[1] = bytes[2];
+                                    bytes[2] = temp;
+                                    normals[i].z = System.BitConverter.ToSingle(bytes, 0);
+                                }
+                            }
+
+                            // Success!
+                            break;
+                        }
                     }
                 }
             }
-            text = read_line(file);  // Skip new-line
+            catch (System.IO.EndOfStreamException)
+            {
+                throw new System.FormatException("The VTK file ended unexpectedly!");
+            }
         }
         public void clear()
         {
             points = null;
             primitive_type = PRIMITIVE_TYPE.UNKNOWN;
             primatives = null;
-            normals_per_vertex = false;
+            normal_type = NORMAL_TYPE.UNKNOWN;
             normals = null;
         }
     }
