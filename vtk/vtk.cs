@@ -16,15 +16,17 @@
     }
     public struct point
     {
-        public float x;
-        public float y;
-        public float z;
+        // Note: while vtk uses floats, we are storing them in doubles for compatibility
+        public double x;
+        public double y;
+        public double z;
     }
     public struct normal
     {
-        public float x;
-        public float y;
-        public float z;
+        // Note: while vtk uses floats, we are storing them in doubles for compatibility
+        public double x;
+        public double y;
+        public double z;
     }
     public struct primative
     {
