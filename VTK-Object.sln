@@ -14,6 +14,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test", "test\test.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wpf_vtk_object", "wpf_vtk_object\wpf_vtk_object.csproj", "{3FF86B3C-0478-414D-977A-97736D953BCE}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{E28F197E-8CD0-4A54-8BBA-FE082348BBCB}"
+	ProjectSection(SolutionItems) = preProject
+		Libraries\geometry_library.dll = Libraries\geometry_library.dll
+		Libraries\matrix_library.dll = Libraries\matrix_library.dll
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

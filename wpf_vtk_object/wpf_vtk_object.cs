@@ -1,4 +1,6 @@
 ﻿using System.Windows.Media.Media3D;
+using geometry_library;
+using matrix_library;
 
 namespace vtk
 {
@@ -48,7 +50,7 @@ namespace vtk
                 {
                     if (normal_type == NORMAL_TYPE.POINT_DATA)
                     {
-                        norm = new System.Windows.Media.Media3D.Vector3D(normals[i].x, normals[i].y, normals[i].z);
+                        norm = new System.Windows.Media.Media3D.Vector3D((normals[i])[0, 0], (normals[i])[1, 0], (normals[i])[2, 0]);
                         mesh.Normals.Add(norm);
                     }
                     else

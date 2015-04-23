@@ -1,4 +1,7 @@
-﻿namespace vtk
+﻿using geometry_library;
+using matrix_library;
+
+namespace vtk
 {
     public enum PRIMITIVE_TYPE
     {
@@ -13,20 +16,6 @@
         UNKNOWN,
         POINT_DATA,
         CELL_DATA
-    }
-    public struct point
-    {
-        // Note: while vtk uses floats, we are storing them in doubles for compatibility
-        public double x;
-        public double y;
-        public double z;
-    }
-    public struct normal
-    {
-        // Note: while vtk uses floats, we are storing them in doubles for compatibility
-        public double x;
-        public double y;
-        public double z;
     }
     public struct primative
     {
@@ -45,7 +34,7 @@
                 return points.Length;
             }
         }
-        public point[] points = null;
+        public point3d[] points = null;
         public PRIMITIVE_TYPE primitive_type = PRIMITIVE_TYPE.UNKNOWN;
         public int num_primatives
         {
@@ -67,7 +56,7 @@
                 return normals.Length;
             }
         }
-        public normal[] normals = null;
+        public matrix[] normals = null;
 
         public vtk_object()
         {
@@ -160,9 +149,11 @@
                     throw new System.FormatException("The VTK file is in an unexpected format (data points aren't floating point)!");
 
                 // Read the points data
-                points = new point[num_points];
+                points = new point3d[num_points];
                 for (int i = 0; i < num_points; ++i)
                 {
+                    points[i] = new point3d();
+
                     if (binary == false)  // ASCII encoded values
                     {
                         text = read_token(file);
@@ -337,17 +328,19 @@
                             normal_type = attribute_type;
 
                             // Read the normal vectors
-                            normals = new normal[num_normals];
+                            normals = new matrix[num_normals];
                             for (int i = 0; i < num_normals; ++i)
                             {
+                                normals[i] = new matrix(3, 1);
+
                                 if (binary == false)  // ASCII encoded values
                                 {
                                     text = read_token(file);
-                                    normals[i].x = float.Parse(text);
+                                    (normals[i])[0, 0] = float.Parse(text);
                                     text = read_token(file);
-                                    normals[i].y = float.Parse(text);
+                                    (normals[i])[1, 0] = float.Parse(text);
                                     text = read_token(file);
-                                    normals[i].z = float.Parse(text);
+                                    (normals[i])[2, 0] = float.Parse(text);
                                 }
                                 else  // Binary encoded values
                                 {
@@ -362,7 +355,7 @@
                                     temp = bytes[1];
                                     bytes[1] = bytes[2];
                                     bytes[2] = temp;
-                                    normals[i].x = System.BitConverter.ToSingle(bytes, 0);
+                                    (normals[i])[0, 0] = System.BitConverter.ToSingle(bytes, 0);
 
                                     bytes = file.ReadBytes(4);
                                     // Swap endianness
@@ -372,7 +365,7 @@
                                     temp = bytes[1];
                                     bytes[1] = bytes[2];
                                     bytes[2] = temp;
-                                    normals[i].y = System.BitConverter.ToSingle(bytes, 0);
+                                    (normals[i])[1, 0] = System.BitConverter.ToSingle(bytes, 0);
 
                                     bytes = file.ReadBytes(4);
                                     // Swap endianness
@@ -382,7 +375,7 @@
                                     temp = bytes[1];
                                     bytes[1] = bytes[2];
                                     bytes[2] = temp;
-                                    normals[i].z = System.BitConverter.ToSingle(bytes, 0);
+                                    (normals[i])[2, 0] = System.BitConverter.ToSingle(bytes, 0);
                                 }
                             }
 

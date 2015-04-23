@@ -30,6 +30,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="geometry_library">
+      <HintPath>..\Libraries\geometry_library.dll</HintPath>
+    </Reference>
+    <Reference Include="matrix_library">
+      <HintPath>..\Libraries\matrix_library.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
