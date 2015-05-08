@@ -4,8 +4,15 @@ using matrix_library;
 
 namespace vtk
 {
+    /// <summary>
+    /// Object for manipulating VTK data with outputs to WPF geometry for easy rendering
+    /// </summary>
     public class wpf_vtk_object : vtk_object
     {
+        /// <summary>
+        /// Converts(outputs) the VTK data to a WPF MeshGeometry3D object for easy rendering
+        /// Note:  This only works for triangle strips currently
+        /// </summary>
         public MeshGeometry3D triangle_mesh
         {
             get
@@ -61,9 +68,16 @@ namespace vtk
             }
         }
 
+        /// <summary>
+        /// Creates an empty WPF VTK object
+        /// </summary>
         public wpf_vtk_object() : base()
         {
         }
+        /// <summary>
+        /// Creates a WPF VTK object and reads the VTK file indicated
+        /// </summary>
+        /// <param name="file_name">The path and filename to read</param>
         public wpf_vtk_object(string file_name) : base(file_name)
         {
         }

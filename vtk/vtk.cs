@@ -23,8 +23,14 @@ namespace vtk
         public int[] indices;
     }
 
+    /// <summary>
+    /// Object for manipulating VTK data
+    /// </summary>
     public class vtk_object
     {
+        /// <summary>
+        /// The number of points in the VTK object
+        /// </summary>
         public int num_points
         {
             get
@@ -34,8 +40,17 @@ namespace vtk
                 return points.Length;
             }
         }
+        /// <summary>
+        /// The array of points locations
+        /// </summary>
         public point3d[] points = null;
+        /// <summary>
+        /// The primative type of the VTK object
+        /// </summary>
         public PRIMITIVE_TYPE primitive_type = PRIMITIVE_TYPE.UNKNOWN;
+        /// <summary>
+        /// The number of primatives in the VTK object
+        /// </summary>
         public int num_primatives
         {
             get
@@ -45,8 +60,18 @@ namespace vtk
                 return primatives.Length;
             }
         }
+        /// <summary>
+        /// The primatives array
+        /// Each priative will contain the number of points in that primative, and the indices into the 'points' array where that point is
+        /// </summary>
         public primative[] primatives = null;
+        /// <summary>
+        /// The type of normals for this VTK object
+        /// </summary>
         public NORMAL_TYPE normal_type = NORMAL_TYPE.UNKNOWN;
+        /// <summary>
+        ///  The number of normals in this VTK object
+        /// </summary>
         public int num_normals
         {
             get
@@ -56,15 +81,31 @@ namespace vtk
                 return normals.Length;
             }
         }
+        /// <summary>
+        /// The array of normals in matrix format (3x1)
+        /// </summary>
         public matrix[] normals = null;
 
+
+        /// <summary>
+        /// Creates an empty VTK object
+        /// </summary>
         public vtk_object()
         {
         }
+        /// <summary>
+        /// Creates a VTK object and reads the VTK file indicated
+        /// </summary>
+        /// <param name="file_name">The path and filename to read</param>
         public vtk_object(string file_name) : this()
         {
             open(file_name);
         }
+        /// <summary>
+        /// Reads a VTK file
+        /// Note:  this overwrites the current data in this object
+        /// </summary>
+        /// <param name="file_name">The path and filename to read</param>
         public virtual void open(string file_name)
         {
             // Helper anonymous functions
@@ -390,6 +431,9 @@ namespace vtk
                 throw new System.FormatException("The VTK file ended unexpectedly!");
             }
         }
+        /// <summary>
+        /// Sets the VTK object back to default/empty values
+        /// </summary>
         public void clear()
         {
             points = null;
