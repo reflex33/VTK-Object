@@ -7,6 +7,10 @@ Linear Algebra Library (both Matrix Library & Geometry Library) - 5/7/2015
 ## TODO
 * The geometry mesh property of the wpf_vtk_object only handles triangle strips.  Add a way to handle other primative types.
 
+## 5/20/2015
+Updated to 5/20/2015 Linear Algebra Library
+Added a copy constructor to the VTK and WPF_VTK objects
+
 ## 5/8/2015
 Updated too 5/7/2015 Linear Algebra Library
 Added xml code comments

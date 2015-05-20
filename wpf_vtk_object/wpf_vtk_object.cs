@@ -75,6 +75,13 @@ namespace vtk
         {
         }
         /// <summary>
+        /// Creates a WPF VTK object that is a deep copy of another object
+        /// </summary>
+        /// <param name="wpf_vtk_object_to_copy">The WPF VTK object to copy</param>
+        public wpf_vtk_object(wpf_vtk_object wpf_vtk_object_to_copy) : base(wpf_vtk_object_to_copy)
+        {
+        }
+        /// <summary>
         /// Creates a WPF VTK object and reads the VTK file indicated
         /// </summary>
         /// <param name="file_name">The path and filename to read</param>

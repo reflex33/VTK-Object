@@ -94,6 +94,34 @@ namespace vtk
         {
         }
         /// <summary>
+        /// Creates a VTK object that is a deep copy of the inputted object
+        /// </summary>
+        /// <param name="vtk_object_to_copy">The VTK object to copy</param>
+        public vtk_object(vtk_object vtk_object_to_copy)
+        {
+            // Copy the points
+            points = new point3d[vtk_object_to_copy.num_points];
+            for (int i = 0; i < vtk_object_to_copy.num_points; ++i)
+                points[i] = new point3d(vtk_object_to_copy.points[i]);
+
+            // Copy the primatives
+            primitive_type = vtk_object_to_copy.primitive_type;
+            primatives = new primative[vtk_object_to_copy.num_primatives];
+            for (int i = 0; i < vtk_object_to_copy.num_primatives; ++i)
+            {
+                primatives[i].num_of_points = vtk_object_to_copy.primatives[i].num_of_points;
+                primatives[i].indices = new int[primatives[i].num_of_points];
+                for (int j = 0; j < primatives[i].num_of_points; ++j)
+                    primatives[i].indices[j] = vtk_object_to_copy.primatives[i].indices[j];
+            }
+
+            // Copy the normals
+            normal_type = vtk_object_to_copy.normal_type;
+            normals = new matrix[vtk_object_to_copy.num_normals];
+            for (int i = 0; i < vtk_object_to_copy.num_normals; ++i)
+                normals[i] = new matrix(vtk_object_to_copy.normals[i]);
+        }
+        /// <summary>
         /// Creates a VTK object and reads the VTK file indicated
         /// </summary>
         /// <param name="file_name">The path and filename to read</param>
