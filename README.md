@@ -2,10 +2,13 @@
 c# objects for handling VTK files.
 
 ## Current versions used in this solution
-Linear Algebra Library (both Matrix Library & Geometry Library) - 6/2/2015
+Linear Algebra Library (both Matrix Library & Geometry Library) - 6/2/2015.2
 
 ## TODO
 * The geometry mesh property of the wpf_vtk_object only handles triangle strips.  Add a way to handle other primative types.
+
+## 6/2/2015
+Updated to 6/2/2015.2 Linear Algebra Library
 
 ## 6/2/2015
 Updated to 6/2/2015 Linear Algebra Library
