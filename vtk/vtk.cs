@@ -88,6 +88,28 @@ namespace vtk
 
 
         /// <summary>
+        /// Gets a point and the corresponding normal
+        /// </summary>
+        /// <param name="index">Index into the point (and normal) array</param>
+        /// <returns>A point and normal pair</returns>
+        public point_and_normal_pair_3d get_point_and_normal_pair_3d(int index)
+        {
+            if (index < 0 || index > points.Length)
+                throw new System.ArgumentException("Index out of range!");
+
+            point_and_normal_pair_3d result = new point_and_normal_pair_3d();
+            result.x = points[index].x;
+            result.y = points[index].y;
+            result.z = points[index].z;
+            result.normal_x = normals[index][0, 0];
+            result.normal_y = normals[index][1, 0];
+            result.normal_z = normals[index][2, 0];
+
+            return result;
+        }
+
+
+        /// <summary>
         /// Creates an empty VTK object
         /// </summary>
         public vtk_object()

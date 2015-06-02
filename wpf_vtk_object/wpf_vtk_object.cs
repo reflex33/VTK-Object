@@ -68,6 +68,7 @@ namespace vtk
             }
         }
 
+
         /// <summary>
         /// Creates an empty WPF VTK object
         /// </summary>
