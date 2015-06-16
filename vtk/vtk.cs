@@ -107,6 +107,21 @@ namespace vtk
 
             return result;
         }
+        /// <summary>
+        /// Gets all of the points and normals of the object in a collection
+        /// </summary>
+        public point_3d_collection<point_and_normal_pair_3d> all_point_and_normal_pairs
+        {
+            get
+            {
+                point_3d_collection<point_and_normal_pair_3d> result = new point_3d_collection<point_and_normal_pair_3d>();
+
+                for (int i = 0; i < points.Length; ++i)
+                    result.Add(get_point_and_normal_pair_3d(i));
+
+                return result;
+            }
+        }
 
 
         /// <summary>
