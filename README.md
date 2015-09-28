@@ -8,6 +8,9 @@ Linear Algebra Library - 2015.07.14
 * The geometry mesh property of the wpf_vtk_object only handles triangle strips.  Add a way to handle other primative types.
 
 ## Changelog
+### 2015.09.28
+Updated to 2015.09.28 Linear Algebra Library
+
 ### 2015.07.14
 Updated to 2015.07.14 Linear Algebra Library
 
