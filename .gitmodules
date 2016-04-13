@@ -1,0 +1,3 @@
+[submodule "Linear-Algebra-Library"]
+	path = Linear-Algebra-Library
+	url = https://github.com/reflex33/Linear-Algebra-Library

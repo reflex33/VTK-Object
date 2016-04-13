@@ -30,12 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="geometry_library">
-      <HintPath>..\Libraries\geometry_library.dll</HintPath>
-    </Reference>
-    <Reference Include="matrix_library">
-      <HintPath>..\Libraries\matrix_library.dll</HintPath>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -51,6 +45,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Linear-Algebra-Library\geometry_library\geometry_library.csproj">
+      <Project>{a135039e-4976-45a7-92bc-f238606f4892}</Project>
+      <Name>geometry_library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Linear-Algebra-Library\matrix_library\matrix_library.csproj">
+      <Project>{7c0a6878-f738-48dc-9998-fc2cbb166f1c}</Project>
+      <Name>matrix_library</Name>
+    </ProjectReference>
     <ProjectReference Include="..\vtk\vtk.csproj">
       <Project>{fc995e54-5b80-4a9e-829b-e4c6fe58da09}</Project>
       <Name>vtk</Name>

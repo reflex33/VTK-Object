@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vtk", "vtk\vtk.csproj", "{FC995E54-5B80-4A9E-829B-E4C6FE58DA09}"
 EndProject
@@ -14,11 +14,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test", "test\test.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wpf_vtk_object", "wpf_vtk_object\wpf_vtk_object.csproj", "{3FF86B3C-0478-414D-977A-97736D953BCE}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{E28F197E-8CD0-4A54-8BBA-FE082348BBCB}"
-	ProjectSection(SolutionItems) = preProject
-		Libraries\geometry_library.dll = Libraries\geometry_library.dll
-		Libraries\matrix_library.dll = Libraries\matrix_library.dll
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "matrix_library", "Linear-Algebra-Library\matrix_library\matrix_library.csproj", "{7C0A6878-F738-48DC-9998-FC2CBB166F1C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "geometry_library", "Linear-Algebra-Library\geometry_library\geometry_library.csproj", "{A135039E-4976-45A7-92BC-F238606F4892}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,6 +36,14 @@ Global
 		{3FF86B3C-0478-414D-977A-97736D953BCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3FF86B3C-0478-414D-977A-97736D953BCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3FF86B3C-0478-414D-977A-97736D953BCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C0A6878-F738-48DC-9998-FC2CBB166F1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C0A6878-F738-48DC-9998-FC2CBB166F1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C0A6878-F738-48DC-9998-FC2CBB166F1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C0A6878-F738-48DC-9998-FC2CBB166F1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A135039E-4976-45A7-92BC-F238606F4892}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A135039E-4976-45A7-92BC-F238606F4892}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A135039E-4976-45A7-92BC-F238606F4892}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A135039E-4976-45A7-92BC-F238606F4892}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
